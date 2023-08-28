@@ -1,0 +1,27 @@
+{
+  "name": "phantasma-blocks",
+  "version": "1.0.0",
+  "description": "A dynamic transactional engine optimized for consistent, high-frequency operations. Designed to process 10 transactions per minute, Phantasma-Blocks offers a seamless blend of speed and reliability, ensuring that every transaction, like a phantom, moves swiftly and effortlessly through the digital realm.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/index",
+    "dev": "tsc && ts-node src/index"
+  },
+  "keywords": [
+    "send",
+    "tx's"
+  ],
+  "type": "module",
+  "author": "João \"Tek\" Novo",
+  "license": "ISC",
+  "dependencies": {
+    "phantasma-ts": "^0.1.61",
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0"
+  }
+}
