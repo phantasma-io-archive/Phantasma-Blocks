@@ -83,7 +83,14 @@ function sleep(ms: number) {
 async function SendTransaction(from: PhantasmaKeys, to: Address) : Promise<string> {
     await SaveAdditionalData(file, `<Transaction Number ${numberOfTransactions}>`);
     await SaveAdditionalData(file, `Sending ${SendAmount / 10 ** SendDecimals} ${SendSymbol} from ${from.Address.Text} to ${to.Text}`);
-    let expiration : Date = new Date(Date.now() + 60 * 60 * 10 * 1000);
+    let expiration: Date = new Date(Date.UTC(
+        new Date().getUTCFullYear(),
+        new Date().getUTCMonth(),
+        new Date().getUTCDate(),
+        new Date().getUTCHours() + 1,
+        new Date().getUTCMinutes() + 10,
+        new Date().getUTCSeconds() + 10
+    ));
     console.info("Expiration:", expiration);
     await SaveAdditionalData(file, `Expiration: ${expiration}`);
 
@@ -108,17 +115,26 @@ async function SendTransaction(from: PhantasmaKeys, to: Address) : Promise<strin
     const hash = await api.sendRawTransaction(rawTx);
     console.info("Transaction sent: ", hash);
 
-    totalKCALSent += SendAmount;
-    numberOfTransactions++;
-    await sleep(4000);
-    const txInfo = await api.getTransaction(hash);
-    if (txInfo){
+    let txInfo = await api.getTransaction(hash);
+    while (!txInfo || (txInfo as any).error !== undefined ){
         console.info("Transaction Info: ", txInfo);
+        console.log("Waiting for transaction to be mined...");
+        await sleep(2000);
+        txInfo = await api.getTransaction(hash);
+    }
+    
+    console.log("Transaction mined!");
+    console.info("Transaction Info: ", txInfo);
+
+
+    if (txInfo){
         await SaveAdditionalData(file, `Transaction Info: ${JSON.stringify(txInfo)}`);
 
         if (txInfo.state === "Halt")
         {
             feesPaid += parseInt(txInfo.fee);
+            numberOfTransactions++;
+            totalKCALSent += SendAmount;
         }
     }
     
