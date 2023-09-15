@@ -115,6 +115,12 @@ async function SendTransaction(from: PhantasmaKeys, to: Address) : Promise<strin
     const hash = await api.sendRawTransaction(rawTx);
     console.info("Transaction sent: ", hash);
 
+    if ( hash.indexOf("CheckTx returned code 2 Transaction is expired") > -1) {
+        console.info("Transaction is expired");
+        await SaveAdditionalData(file, `Transaction is expired`);
+        return hash;
+    }
+
     let txInfo = await api.getTransaction(hash);
     while (!txInfo || (txInfo as any).error !== undefined ){
         console.info("Transaction Info: ", txInfo);
