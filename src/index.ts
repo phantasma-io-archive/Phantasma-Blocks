@@ -9,6 +9,7 @@ const API_URL : string = String(process.env.API_URL);
 const NexusName = String(process.env.NEXUS_NAME);
 const ChainName = String(process.env.CHAIN_NAME);
 const Payload = Base16.encode(String(process.env.PAYLOAD));
+const MaxNumberOfTries = 5;
 
 const Wallet1 = PhantasmaKeys.fromWIF(process.env.WALLET1_WIF);
 const Wallet2 = PhantasmaKeys.fromWIF(process.env.WALLET2_WIF);
@@ -122,14 +123,18 @@ async function SendTransaction(from: PhantasmaKeys, to: Address) : Promise<strin
     }
 
     let txInfo = await api.getTransaction(hash);
-    while (!txInfo || (txInfo as any).error !== undefined ){
+    let numberOfTries = 0;
+    while ((!txInfo || (txInfo as any).error !== undefined)  && numberOfTries < MaxNumberOfTries){
         console.info("Transaction Info: ", txInfo);
         console.log("Waiting for transaction to be mined...");
         await sleep(2000);
         txInfo = await api.getTransaction(hash);
     }
+
+    if ( numberOfTries < MaxNumberOfTries){
+        console.log("Transaction mined!");
+    }
     
-    console.log("Transaction mined!");
     console.info("Transaction Info: ", txInfo);
 
 
