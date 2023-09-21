@@ -113,6 +113,7 @@ async function SendTransaction(from: PhantasmaKeys, to: Address) : Promise<strin
     tx.signWithKeys(from);
     const rawTx = Base16.encodeUint8Array(tx.ToByteAray(true));
     await SaveAdditionalData(file, rawTx);
+    
     const hash = await api.sendRawTransaction(rawTx);
     console.info("Transaction sent: ", hash);
 
@@ -129,6 +130,7 @@ async function SendTransaction(from: PhantasmaKeys, to: Address) : Promise<strin
         console.log("Waiting for transaction to be mined...");
         await sleep(2000);
         txInfo = await api.getTransaction(hash);
+        numberOfTries++;
     }
 
     if ( numberOfTries < MaxNumberOfTries){
