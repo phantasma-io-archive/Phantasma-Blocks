@@ -1,0 +1,13 @@
+Description=Run Blockz
+
+Wants=network.target
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=sh /home/user/dir/Phantasma-Blocks/autostart.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
